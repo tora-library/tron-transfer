@@ -1,0 +1,17 @@
+server:
+  port: 8081
+  context-path: /
+
+spring:
+  profiles:
+    active: prod
+
+logging:
+  file: ./log/tron.log
+
+config:
+  gateway: https://api.trongrid.io
+  fee_limit: 100000000
+  private_key: aaaaaaaaaaaaaaaaaaaaaa
+  usdt_address: TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t
+  dac_address: TMKWCEjMofykeZ8oMwgVEYscmker6ev6jU

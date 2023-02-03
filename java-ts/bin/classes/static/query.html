@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>查询余额</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+
+</head>
+
+<body>
+    <div style="display: none" id="alipay_wap"></div>
+    <ul class="layui-nav" lay-filter="">
+        <li class="layui-nav-item"><a href="/index.html">离线转账</a></li>
+        <li class="layui-nav-item layui-this"><a href="/query.html">查询余额</a></li>
+        <li class="layui-nav-item"><a href="./queryTransaction.html">查询交易</a></li>
+    </ul>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <form class="layui-form ">
+                <div class="layui-tab layui-tab-brief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">账户明细</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">选择代币</label>
+                            <div class="layui-input-block">
+                                <select id="currency" class="layui-input">
+                                    <option value="dac">DAC</option>
+                                    <option value="usdt">USDT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">钱包地址</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="address" name="address" lay-verify="required" autocomplete="off" placeholder="请输入钱包地址" class="layui-input" value="" />
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">钱包余额</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="balance" value="0.000000" class="layui-input" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="padding-bottom: 20px;">
+                            <button type="button" class="layui-btn layui-btn-danger" lay-submit="" lay-filter="query">查询结果</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="../layui/layui.js"></script>
+    <script>
+        //注意：导航 依赖 element 模块，否则无法进行功能性操作
+        layui.use(['element', 'form'], function() {
+            var form = layui.form,
+                $ = layui.$,
+                element = layui.element,
+                layer = layui.layer;
+
+            form.on('submit(query)', function(data) {
+                let currency = $('#currency').val();
+                layer.load(1, {shade: [0.3, '#000']}),
+                $('#balance').val('--.------'),
+                $.ajax({
+                    type: "POST",
+                    url: '/tron/' + currency + '/balance',
+                    data: data.field,
+                    complete: () => layer.closeAll(),
+                    success: function(res) {
+                        if (res.status) {
+                            $('#balance').val(res.data.balance);
+                        } else {
+                            layer.alert(res.msg)
+                        }
+                    }
+                });
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+
+            form.render();
+        });
+    </script>
+
+</body>
+
+</html>
